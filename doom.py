@@ -51,13 +51,7 @@ secret_unlocked = [False]*4
 
 def drawUI(current_sector):
     pygame.draw.rect(screen, gb_black, (0, height - UI_HEIGHT, width, height), 0)
-    secrets = "[ ] [ ] [ ] [ ]"
-    name = current_sector.str_name
-    ui_str = " %-33s   %15s "
-    draw_text(height-UI_HEIGHT,0,ui_str%(name,secrets),gb_white2)
-
-    for n,secret,char,color in zip(range(4),secret_unlocked,"YGBR",[gb_yellow2,gb_green2,gb_blue2,gb_red2]):
-        draw_text(height-UI_HEIGHT,0," "*(38+4*n) + char,color if secret else gb_black2)
+    draw_text(height-UI_HEIGHT,0,current_sector.str_name,gb_white2)
 
 
 def intersect(x1, y1, x2, y2, h):
