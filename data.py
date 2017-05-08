@@ -82,7 +82,7 @@ final_step = sector([2, -14,
 join_sectors(last_step, final_step)
 
 
-magenta_room1 = sector([2, -14,
+hub01_room1 = sector([2, -14,
                         -2, -14,
                         -2, -20,
                         2, -20, ],
@@ -90,40 +90,44 @@ magenta_room1 = sector([2, -14,
                        gb_magenta,
                        gb_black, 300, 3200, "Magenta Room")
 
-magenta_room_center = sector([2, -20,
-                              -2, -20,
-                              0, -24],
-                             gb_blue2,
-                             gb_black2,
-                             gb_black, 400, 3200, "Magenta Room")
+hub01_wing1 = sector([-2, -20,
+                      -2, -14,
+                      -14, -12,
+                      -10, -24,],
+                     gb_blue2,
+                     gb_magenta,
+                     gb_magenta2, -100, 3200, "Magenta Room")
 
-magenta_room2 = sector([0, -24,
-                        -2, -20,
-                        -10, -24,
-                        -8, -28, ],
-                       gb_blue2,
-                       gb_magenta,
-                       gb_magenta2, 300, 3200, "Magenta Room")
 
-magenta_room3 = sector([2, -20,
+hub01_room_center = sector([2, -20,
+                            -2, -20,
+                            0, -24],
+                           gb_blue2,
+                           gb_black2,
+                           gb_black, 400, 3200, "Magenta Room")
+
+hub01_room2 = sector([0, -24,
+                      -2, -20,
+                      -10, -24,
+                      -8, -28, ],
+                     gb_blue2,
+                     gb_magenta,
+                     gb_black, 300, 3200, "Magenta Room")
+
+hub01_room3 = sector([2, -20,
                         0, -24,
                         8, -28,
                         10, -24,
                         ],
                        gb_blue2,
                        gb_magenta,
-                       gb_magenta2, 300, 3200, "Magenta Room")
-
-topdown_max_depth = 8
+                       gb_black, 300, 3200, "Magenta Room")
 
 
-join_sectors(final_step, magenta_room1)
-join_sectors(magenta_room_center, magenta_room1)
-join_sectors(magenta_room_center, magenta_room2)
-join_sectors(magenta_room_center, magenta_room3)
+join_sectorlist([final_step, hub01_room1,hub01_room_center, hub01_room1,hub01_wing1,hub01_room2,hub01_room3])
 
 
-magenta_room2a = sector([-8, -28,
+hub01_room2a = sector([-8, -28,
                          -10, -24,
                         -13, -22,
                          -18, -22,
@@ -134,18 +138,6 @@ magenta_room2a = sector([-8, -28,
                        gb_magenta,
                        gb_magenta2, 250, 3200, "Magenta Room")
 
-join_sectors(magenta_room2, magenta_room2a)
+join_sectors(hub01_room2, hub01_room2a)
 
-
-# hub = sector([2,-14 -i*0.1,
-#               -2,-14 -i*3,
-#               20,0,
-#               10,0,
-#              ],gb_blue2,gb_white,gb_white2,0,4800)
-
-# join_sectors(last_step,hub)
-
-
-# current_sector = init_sector
-
-
+current_sector = hub01_room_center

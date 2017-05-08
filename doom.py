@@ -9,7 +9,7 @@ from engine import *
 
 key_press = keypress()
 current_sector = None
-topdown_max_depth = 4
+topdown_max_depth = 8
 topdown_scale = 10
 move_speed = 0.1
 turn_speed = 0.05
