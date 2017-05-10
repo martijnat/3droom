@@ -16,6 +16,7 @@ turn_speed = 0.05
 player_x = 0
 player_y = 0
 player_z = 0
+height_offset = 9999
 player_height = 480
 player_jumpdz = -35
 player_gravdz = 1
@@ -51,7 +52,7 @@ secret_unlocked = [False]*4
 
 def drawUI(current_sector):
     pygame.draw.rect(screen, gb_black, (0, height - UI_HEIGHT, width, height), 0)
-    draw_text(height-UI_HEIGHT,0,current_sector.str_name,gb_white2)
+    draw_text(height-UI_HEIGHT,0," "+current_sector.str_name,gb_white2)
 
 
 def intersect(x1, y1, x2, y2, h):
@@ -241,7 +242,7 @@ class sector():
         self.color_wall = color_wall
         self.color_floor = color_floor
         self.joined_sectors = []
-        self.elevation = elevation
+        self.elevation = elevation + height_offset
         self.height = top - elevation
         self.rendering = False
         self.str_name = str_name
@@ -297,7 +298,7 @@ while engine_step(keypress):
             print(e)
 
     new_x, new_y, new_z = player_x, player_y, player_z
-    if player_z >= current_sector.elevation:
+    if player_z > current_sector.elevation:
         player_dz = 0
         new_z = current_sector.elevation
     else:
@@ -321,13 +322,14 @@ while engine_step(keypress):
         player_angle -= turn_speed
     if keypress.p:
         draw_topdown = not draw_topdown
+        print(player_x,player_y,player_z)
     if keypress.space:
         if new_z == -current_sector.elevation:
             player_dz = player_jumpdz
 
     new_z += player_dz
     current_sector, player_x, player_y,player_z = current_sector.move_to(new_x, new_y,new_z)
-    current_sector.draw(player_x, player_y, player_angle, -width//2, width//2, -height//2, height//2 - UI_HEIGHT, -height//2, height//2, player_z - player_height)
+    current_sector.draw(player_x, player_y, player_angle, -width//2, width//2, -height//2, height//2 - UI_HEIGHT, -height//2, height//2, player_z - player_height + height_offset)
     if draw_topdown:
         current_sector.draw_topdown(player_x, player_y, player_angle)
     drawUI(current_sector)
