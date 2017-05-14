@@ -71,10 +71,10 @@ hub01_pillars = [sector([2, -14, -2, -14, -3, -15, 3, -15, ], gb_white2, gb_whit
                  sector([-2,-10, -3,-9, -3, -15, -2, -14,], gb_white2, gb_white, gb_black2, 400, 3600, "Portal to new places"),
                  sector([-3, -9, -2, -10, 2, -10, 3, -9, ], gb_white2, gb_white, gb_black2, 400, 3600, "Portal to new places"),]
 
-hub01_tsplit = [sector([2, -20, -2, -20, 0, -24], gb_white2, gb_white, gb_black2, 400, 3600, "Portal to new places"),
-                sector([3, -15, -3, -15, -2, -20, 2, -20, ], gb_white2, gb_white, gb_black2, 400, 3600, "Portal to new places"),
-                sector([0, -24, -2, -20, -10, -24, -8, -28, ], gb_white2, gb_white, gb_black2, 200, 3600, "Portal to new places"),
-                sector([2, -20, 0, -24, 8, -28, 10, -24,], gb_white2, gb_white, gb_black2, 400, 3600, "Portal to new places")]
+hub01_tsplit = [sector([2, -20, -2, -20, 0, -24], gb_white2, gb_white, gb_black2, 200, 3600, "Portal to new places"),
+                sector([3, -15, -3, -15, -2, -20, 2, -20, ], gb_white2, gb_white, gb_black2, 300, 3600, "Portal to new places"),
+                sector([0, -24, -2, -20, -10, -24, -8, -28, ], gb_white2, gb_white, gb_white2, 0, 3600, "Portal to new places"),
+                sector([2, -20, 0, -24, 8, -28, 10, -24,], gb_white2, gb_white, gb_black2, 100, 3600, "Portal to new places")]
 
 hub01_floor = [sector([-2, -20, -3, -15, -15, -15, -10, -24,], gb_white2, gb_white, gb_white2, 0, 3600, "Portal to new places"),
                sector([10, -24, 15, -15, 3, -15, 2, -20,], gb_white2, gb_white, gb_white2, 0, 3600, "Portal to new places"),
@@ -107,11 +107,11 @@ hub01_platforms = [sector([10,-30,10,-24, 8,-28,  8,-30,], gb_white2, gb_red, gb
                    sector([10,-55,10,-50, 8,-50,  8,-55,], gb_white2, gb_white, gb_white2, 0, 3600, "Portal to new places"),
 
                    sector([-8,-30, -8,-28, -10,-24, -10,-30,], gb_white2, gb_cyan, gb_black2, 1200, 3600, "Portal to new places"),
-                   sector([-8,-35, -8,-30, -10,-30, -10,-35,], gb_white2, gb_white, gb_white2, 0, 3600, "Portal to new places"),
+                   sector([-8,-35, -8,-30, -10,-30, -10,-35,], gb_white2, gb_white, gb_black2, 1200, 3600, "Portal to new places"),
                    sector([-8,-40, -8,-35, -10,-35, -10,-40,], gb_white2, gb_magenta, gb_black2, 1200, 3600, "Portal to new places"),
-                   sector([-8,-45, -8,-40, -10,-40, -10,-45,], gb_white2, gb_white, gb_white2, 0, 3600, "Portal to new places"),
+                   sector([-8,-45, -8,-40, -10,-40, -10,-45,], gb_white2, gb_white, gb_black2, 1200, 3600, "Portal to new places"),
                    sector([-8,-50, -8,-45, -10,-45, -10,-50,], gb_white2, gb_yellow, gb_black2, 1200, 3600, "Portal to new places"),
-                   sector([-8,-55, -8,-50, -10,-50, -10,-55,], gb_white2, gb_white, gb_white2, 0, 3600, "Portal to new places"),
+                   sector([-8,-55, -8,-50, -10,-50, -10,-55,], gb_white2, gb_white, gb_black2, 1200, 3600, "Portal to new places"),
 ]
 
 join_sectorlist([final_step] + hub01_pillars + hub01_tsplit + hub01_floor + hub01_slices + hub01_platforms)
@@ -129,14 +129,14 @@ hub02_pillars = [sector([2, -14, -2, -14, -3, -15, 3, -15, ], gb_blue2, gb_blue,
 
 hub02_tsplit = [sector([2, -20, -2, -20, 0, -24], gb_blue2, gb_blue, gb_black2, 400, 3600, "Something is different"),
                 sector([3, -15, -3, -15, -2, -20, 2, -20, ], gb_blue2, gb_blue, gb_black2, 400, 3600, "Something is different"),
-                sector([0, -24, -2, -20, -10, -24, -8, -28, ], gb_blue2, gb_blue, gb_black2, 200, 3600, "Something is different"),
+                sector([0, -24, -2, -20, -10, -24, -8, -28, ], gb_blue2, gb_blue, gb_black2, 400, 3600, "Something is different"),
                 sector([2, -20, 0, -24, 8, -28, 10, -24,], gb_blue2, gb_blue, gb_black2, 400, 3600, "Something is different")]
 
 hub02_floor = [sector([-2, -20, -3, -15, -15, -15, -10, -24,], gb_blue2, gb_blue, gb_blue2, 0, 3600, "Something is different"),
                sector([10, -24, 15, -15, 3, -15, 2, -20,], gb_blue2, gb_blue, gb_blue2, 0, 3600, "Something is different"),
                sector([3, -15, 15, -15, 15, -4, 3,-9,], gb_blue2, gb_blue, gb_blue2, 0, 3600, "Something is different"),
                sector([-3,-9, -15, -4, -15, -15, -3, -15,], gb_blue2, gb_blue, gb_blue2, 0, 3600, "Something is different"),
-               sector([15, -4, 10, 1, 5, 3, -5, 3, -10, 1, -15, -4, -3, -9, 3, -9,], gb_blue2, gb_blue, gb_blue2, 0, 3600, "Something is different")]
+               sector([15, -4, 10, 1, 5, 3, -5, 3, -10, 1, -15, -4, -3, -9, 3, -9,], gb_blue2, gb_blue, gb_blue2, 200, 3600, "Something is different")]
 
 hub02_slices = [sector([0,-24, -8,-28, -8,-30,], gb_blue2, gb_blue, gb_blue2, 0, 3600, "Something is different"),
                 sector([0,-24, -8,-30, -8,-35,], gb_blue2, gb_blue, gb_blue2, 0, 3600, "Something is different"),
@@ -171,15 +171,15 @@ hub02_platforms = [sector([10,-30,10,-24, 8,-28,  8,-30,], gb_blue2, gb_red, gb_
 ]
 
 
-hub03_pillars = [sector([2, -14, -2, -14, -3, -15, 3, -15, ], gb_green2, gb_green, gb_black2, 400, 3600, "There is no wall there"),
-                 sector([2, -14, 3, -15,3,-9, 2,-10, ], gb_green2, gb_green, gb_black2, 400, 3600, "There is no wall there"),
-                 sector([-2,-10, -3,-9, -3, -15, -2, -14,], gb_green2, gb_green, gb_black2, 400, 3600, "There is no wall there"),
-                 sector([-3, -9, -2, -10, 2, -10, 3, -9, ], gb_green2, gb_green, gb_black2, 400, 3600, "There is no wall there"),]
+hub03_pillars = [sector([2, -14, -2, -14, -3, -15, 3, -15, ], gb_green2, gb_green, gb_black2, 100, 3600, "There is no wall there"),
+                 sector([2, -14, 3, -15,3,-9, 2,-10, ], gb_green2, gb_green, gb_black2, 100, 3600, "There is no wall there"),
+                 sector([-2,-10, -3,-9, -3, -15, -2, -14,], gb_green2, gb_green, gb_black2, 100, 3600, "There is no wall there"),
+                 sector([-3, -9, -2, -10, 2, -10, 3, -9, ], gb_green2, gb_green, gb_black2, 100, 3600, "There is no wall there"),]
 
-hub03_tsplit = [sector([2, -20, -2, -20, 0, -24], gb_green2, gb_green, gb_black2, 400, 3600, "There is no wall there"),
-                sector([3, -15, -3, -15, -2, -20, 2, -20, ], gb_green2, gb_green, gb_black2, 400, 3600, "There is no wall there"),
-                sector([0, -24, -2, -20, -10, -24, -8, -28, ], gb_green2, gb_green, gb_black2, 200, 3600, "There is no wall there"),
-                sector([2, -20, 0, -24, 8, -28, 10, -24,], gb_green2, gb_green, gb_black2, 400, 3600, "There is no wall there")]
+hub03_tsplit = [sector([2, -20, -2, -20, 0, -24], gb_green2, gb_green, gb_black2, 200, 3600, "There is no wall there"),
+                sector([3, -15, -3, -15, -2, -20, 2, -20, ], gb_green2, gb_green, gb_black2, 100, 3600, "There is no wall there"),
+                sector([0, -24, -2, -20, -10, -24, -8, -28, ], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
+                sector([2, -20, 0, -24, 8, -28, 10, -24,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there")]
 
 hub03_floor = [sector([-2, -20, -3, -15, -15, -15, -10, -24,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
                sector([10, -24, 15, -15, 3, -15, 2, -20,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
@@ -187,22 +187,22 @@ hub03_floor = [sector([-2, -20, -3, -15, -15, -15, -10, -24,], gb_green2, gb_gre
                sector([-3,-9, -15, -4, -15, -15, -3, -15,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
                sector([15, -4, 10, 1, 5, 3, -5, 3, -10, 1, -15, -4, -3, -9, 3, -9,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there")]
 
-hub03_slices = [sector([0,-24, -8,-28, -8,-30,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
-                sector([0,-24, -8,-30, -8,-35,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
-                sector([0,-24, -8,-35, -8,-40,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
-                sector([0,-24, -8,-40, -8,-45,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
-                sector([0,-24, -8,-45, -8,-50,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
-                sector([0,-24, -8,-50, -8,-55,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
-                sector([0,-24, -8,-55, -4,-55,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
-                sector([0,-24, -4,-55,  0,-55,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
-                sector([0,-24, 0,-55,  4,-55,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
-                sector([0,-24, 4,-55,  8,-55,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
-                sector([0,-24, 8,-55,  8,-50,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
-                sector([0,-24, 8,-50,  8,-45,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
-                sector([0,-24, 8,-45,  8,-40,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
-                sector([0,-24, 8,-40,  8,-35,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
-                sector([0,-24, 8,-35,  8,-30,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
-                sector([0,-24, 8,-30,  8,-28,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there")]
+hub03_slices = [sector([0,-24, -8,-28, -8,-30,], gb_green2, gb_green, gb_black2, 200, 3600, "There is no wall there"),
+                sector([0,-24, -8,-30, -8,-35,], gb_green2, gb_green, gb_green2, 250, 3600, "There is no wall there"),
+                sector([0,-24, -8,-35, -8,-40,], gb_green2, gb_green, gb_black2, 300, 3600, "There is no wall there"),
+                sector([0,-24, -8,-40, -8,-45,], gb_green2, gb_green, gb_green2, 350, 3600, "There is no wall there"),
+                sector([0,-24, -8,-45, -8,-50,], gb_green2, gb_green, gb_black2, 400, 3600, "There is no wall there"),
+                sector([0,-24, -8,-50, -8,-55,], gb_green2, gb_green, gb_green2, 450, 3600, "There is no wall there"),
+                sector([0,-24, -8,-55, -4,-55,], gb_green2, gb_green, gb_black2, 500, 3600, "There is no wall there"),
+                sector([0,-24, -4,-55,  0,-55,], gb_green2, gb_green, gb_green2, 550, 3600, "There is no wall there"),
+                sector([0,-24, 0,-55,  4,-55,], gb_green2, gb_green, gb_green2, 550, 3600, "There is no wall there"),
+                sector([0,-24, 4,-55,  8,-55,], gb_green2, gb_green, gb_black2, 500, 3600, "There is no wall there"),
+                sector([0,-24, 8,-55,  8,-50,], gb_green2, gb_green, gb_green2, 450, 3600, "There is no wall there"),
+                sector([0,-24, 8,-50,  8,-45,], gb_green2, gb_green, gb_black2, 400, 3600, "There is no wall there"),
+                sector([0,-24, 8,-45,  8,-40,], gb_green2, gb_green, gb_green2, 350, 3600, "There is no wall there"),
+                sector([0,-24, 8,-40,  8,-35,], gb_green2, gb_green, gb_black2, 300, 3600, "There is no wall there"),
+                sector([0,-24, 8,-35,  8,-30,], gb_green2, gb_green, gb_green2, 250, 3600, "There is no wall there"),
+                sector([0,-24, 8,-30,  8,-28,], gb_green2, gb_green, gb_black2, 200, 3600, "There is no wall there")]
 
 hub03_platforms = [sector([10,-30,10,-24, 8,-28,  8,-30,], gb_green2, gb_red, gb_black2, 400, 3600, "There is no wall there"),
                    sector([10,-35,10,-30, 8,-30,  8,-35,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
@@ -219,8 +219,8 @@ hub03_platforms = [sector([10,-30,10,-24, 8,-28,  8,-30,], gb_green2, gb_red, gb
                    sector([-8,-55, -8,-50, -10,-50, -10,-55,], gb_green2, gb_green, gb_green2, 0, 3600, "There is no wall there"),
 ]
 
-hub_connector1 = sector([-2,-10, -2,-12, 2,-12, 2,-10,], gb_green2, gb_green, gb_black2, 400, 3600, "A new backdrop")
-hub_connector2 = sector([-2,-12, -2,-14, 2,-14, 2,-12,], gb_green2, gb_green, gb_black2, 400, 3600, "A new backdrop")
+hub_connector1 = sector([-2,-10, -2,-12, 2,-12, 2,-10,], gb_green2, gb_green, gb_black2, 300, 3600, "A new backdrop")
+hub_connector2 = sector([-2,-12, -2,-14, 2,-14, 2,-12,], gb_green2, gb_green, gb_black2, 200, 3600, "A new backdrop")
 
 bridge_connector1 = sector([15,-40, 10,-35, 10,-40, 10,-42], gb_green, gb_green, gb_green, 800, 3600, "You do not need to reach the end")
 bridge_connector2 = sector([10,-42, 10,-44, 15,-50, 15,-40,], gb_green, gb_green, gb_green, 800, 3600, "You do not need to reach the end")
@@ -235,15 +235,15 @@ join_sectors(hub_connector1,hub_connector2)
 join_sectorlist([hub_connector2,bridge_connector1,bridge_connector2] + hub03_pillars + hub03_tsplit + hub03_floor + hub03_slices + hub03_platforms)
 join_sectorlist([bridge_connector2,bridge_connector3,bridge_connector4,bridge_connector5,bridge_connector6])
 
-hub04_pillars = [sector([2, -14, -2, -14, -3, -15, 3, -15, ], gb_yellow2, gb_yellow, gb_black2, 400, 3600, "Back and forth"),
-                 sector([2, -14, 3, -15,3,-9, 2,-10, ], gb_yellow2, gb_yellow, gb_black2, 400, 3600, "Back and forth"),
-                 sector([-2,-10, -3,-9, -3, -15, -2, -14,], gb_yellow2, gb_yellow, gb_black2, 400, 3600, "Back and forth"),
-                 sector([-3, -9, -2, -10, 2, -10, 3, -9, ], gb_yellow2, gb_yellow, gb_black2, 400, 3600, "Back and forth"),]
+hub04_pillars = [sector([2, -14, -2, -14, -3, -15, 3, -15, ], gb_yellow2, gb_yellow, gb_yellow2, 400, 3600, "Back and forth"),
+                 sector([2, -14, 3, -15,3,-9, 2,-10, ], gb_yellow2, gb_yellow, gb_yellow2, 400, 3600, "Back and forth"),
+                 sector([-2,-10, -3,-9, -3, -15, -2, -14,], gb_yellow2, gb_yellow, gb_yellow2, 400, 3600, "Back and forth"),
+                 sector([-3, -9, -2, -10, 2, -10, 3, -9, ], gb_yellow2, gb_yellow, gb_yellow2, 400, 3600, "Back and forth"),]
 
-hub04_tsplit = [sector([2, -20, -2, -20, 0, -24], gb_yellow2, gb_yellow, gb_black2, 400, 3600, "Back and forth"),
-                sector([3, -15, -3, -15, -2, -20, 2, -20, ], gb_yellow2, gb_yellow, gb_black2, 400, 3600, "Back and forth"),
-                sector([0, -24, -2, -20, -10, -24, -8, -28, ], gb_yellow2, gb_yellow, gb_black2, 200, 3600, "Back and forth"),
-                sector([2, -20, 0, -24, 8, -28, 10, -24,], gb_yellow2, gb_yellow, gb_black2, 400, 3600, "Back and forth")]
+hub04_tsplit = [sector([2, -20, -2, -20, 0, -24], gb_yellow2, gb_yellow, gb_yellow2, 400, 3600, "Back and forth"),
+                sector([3, -15, -3, -15, -2, -20, 2, -20, ], gb_yellow2, gb_yellow, gb_yellow2, 400, 3600, "Back and forth"),
+                sector([0, -24, -2, -20, -10, -24, -8, -28, ], gb_yellow2, gb_yellow, gb_yellow2, 400, 3600, "Back and forth"),
+                sector([2, -20, 0, -24, 8, -28, 10, -24,], gb_yellow2, gb_yellow, gb_yellow2, 400, 3600, "Back and forth")]
 
 hub04_floor = [sector([-2, -20, -3, -15, -15, -15, -10, -24,], gb_yellow2, gb_yellow, gb_yellow2, 0, 3600, "Back and forth"),
                sector([10, -24, 15, -15, 3, -15, 2, -20,], gb_yellow2, gb_yellow, gb_yellow2, 0, 3600, "Back and forth"),
@@ -258,8 +258,8 @@ hub04_slices = [sector([0,-24, -8,-28, -8,-30,], gb_yellow2, gb_yellow, gb_yello
                 sector([0,-24, -8,-45, -8,-50,], gb_yellow2, gb_yellow, gb_yellow2, 0, 3600, "Back and forth"),
                 sector([0,-24, -8,-50, -8,-55,], gb_yellow2, gb_yellow, gb_yellow2, 0, 3600, "Back and forth"),
                 sector([0,-24, -8,-55, -4,-55,], gb_yellow2, gb_yellow, gb_yellow2, 0, 3600, "Back and forth"),
-                sector([0,-24, -4,-55,  0,-55,], gb_yellow2, gb_yellow, gb_yellow2, 0, 3600, "Back and forth"),
-                sector([0,-24, 0,-55,  4,-55,], gb_yellow2, gb_yellow, gb_yellow2, 0, 3600, "Back and forth"),
+                sector([0,-24, -4,-55,  0,-55,], gb_yellow2, gb_yellow, gb_yellow2, 400, 3600, "Back and forth"),
+                sector([0,-24, 0,-55,  4,-55,], gb_yellow2, gb_yellow, gb_yellow2, 400, 3600, "Back and forth"),
                 sector([0,-24, 4,-55,  8,-55,], gb_yellow2, gb_yellow, gb_yellow2, 0, 3600, "Back and forth"),
                 sector([0,-24, 8,-55,  8,-50,], gb_yellow2, gb_yellow, gb_yellow2, 0, 3600, "Back and forth"),
                 sector([0,-24, 8,-50,  8,-45,], gb_yellow2, gb_yellow, gb_yellow2, 0, 3600, "Back and forth"),
@@ -297,13 +297,13 @@ join_sectors(hub01_platforms[8],hub01_platforms[7])
 
 
 # 7,8
-# current_sector = hub04_floor[1]
-current_sector = init_sector
+current_sector = hub02_floor[1]
+# current_sector = init_sector
 #topdown_max_depth =  5
 
 
-player_x = -6
-player_y = -1
-player_z = 0
-player_angle = -0.6
+# player_x = -6
+# player_y = -1
+# player_z = 0
+# player_angle = -0.6
 
