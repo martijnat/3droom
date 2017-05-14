@@ -9,7 +9,7 @@ import time
 pygame.init()
 # initialize font; must be called after 'pygame.init()' to avoid 'Font not Initialized' error
 mainfont = pygame.font.Font("./FSEX300-L.ttf",24)
-
+DEBUG = False
 
 engine_version = "1.0"
 speed = [2, 2]
@@ -87,10 +87,13 @@ def draw_text(h,w,msg,color):
     label = mainfont.render(msg, 1, color)
     screen.blit(label, (w, h))
 
-def draw_column(x,y_top,y_bottom,color):
+def draw_column(x,y_top,y_bottom,color,debug = False):
     # color = fog_color(color,wall_angle)
     try:
         pygame.gfxdraw.line(screen, int(width/2+x), int(height/2+y_top), int(width/2+x), int(height/2+y_bottom), color)
+        if debug:
+            pygame.gfxdraw.pixel(screen, int(width/2+x), int(height/2+y_top), (0x1d,  0x20,  0x21,  255))
+            pygame.gfxdraw.pixel(screen, int(width/2+x), int(height/2+y_bottom), (0x1d,  0x20,  0x21,  255))
     except:
         pass
         # pygame.gfxdraw.pixel(screen, int(width/2+x), int(height/2+y_top), black)

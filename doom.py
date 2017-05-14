@@ -10,7 +10,7 @@ from engine import *
 
 key_press = keypress()
 current_sector = None
-topdown_max_depth = 5
+topdown_max_depth = 4
 topdown_scale = 10
 # player_max_move_speed = 0.2
 player_accel_rate = 0.02
@@ -51,6 +51,25 @@ gb_cyan = (0x68,  0x9d,  0x6a,  255)  # 689d6a
 gb_cyan2 = (0x8e,  0xc0,  0x7c,  255)  # 8ec07c
 gb_white = (0xd5, 0xc4, 0xa1,  255)
 gb_white2 = (0xf9, 0xf5, 0xd7,  255)
+
+
+# Dos colors
+# gb_black     = (0x00, 0x00, 0x00, 255)
+# gb_red       = (0xa8, 0x00, 0x00, 255)
+# gb_green     = (0x00, 0xa8, 0x00, 255)
+# gb_yellow    = (0xa8, 0x54, 0x00, 255)
+# gb_blue      = (0x00, 0x00, 0xa8, 255)
+# gb_magenta   = (0xa8, 0x00, 0xa8, 255)
+# gb_cyan      = (0x00, 0xa8, 0xa8, 255)
+# gb_white     = (0xa8, 0xa8, 0xa8, 255)
+# gb_black2    = (0x54, 0x54, 0x54, 255)
+# gb_red2      = (0xfc, 0x54, 0x54, 255)
+# gb_green2    = (0x54, 0xfc, 0x54, 255)
+# gb_yellow2   = (0xfc, 0xfc, 0x54, 255)
+# gb_blue2     = (0x54, 0x54, 0xfc, 255)
+# gb_magenta2  = (0xfc, 0x54, 0xfc, 255)
+# gb_cyan2     = (0x54, 0xfc, 0xfc, 255)
+# gb_white2    = (0xfc, 0xfc, 0xfc, 255)
 
 allcolors = [ gb_black , gb_black2 , gb_red , gb_red2 , gb_green ,
               gb_green2 , gb_yellow , gb_yellow2 , gb_blue , gb_blue2 , gb_magenta ,
@@ -177,12 +196,12 @@ class wall():
             draw_column(x, y_min, y_bottom,color_ceil)
             draw_column(x, y_top, y_max,color_floor)
             if not self.portal:
-                draw_column(x, y_top, y_bottom,color_wall)
+                draw_column(x, y_top, y_bottom,color_wall,DEBUG)
             else:
                 if portal_top_ratio < 0:
-                    draw_column(x, y_bottom + (portal_top_ratio) * (y_bottom-y_top) , y_bottom,color_wall)
+                    draw_column(x, y_bottom + (portal_top_ratio) * (y_bottom-y_top) , y_bottom,color_wall,DEBUG)
                 if portal_bottom_ratio > 0:
-                    draw_column(x, y_top + (portal_bottom_ratio) * (y_bottom-y_top) , y_top,color_wall)
+                    draw_column(x, y_top + (portal_bottom_ratio) * (y_bottom-y_top) , y_top,color_wall,DEBUG)
                 pass
             y_top += top_wall_angle
             y_bottom += bottom_wall_angle
@@ -199,9 +218,9 @@ class wall():
         rx1,ry1,rx2,ry2 = [_ * topdown_scale for _ in [rx1,ry1,rx2,ry2]]
 
         if depth == 0:
-            draw_line(rx1, ry1, rx2, ry2, green)
+            draw_line(rx1, ry1, rx2, ry2, gb_cyan2)
         else:
-            draw_line(rx1, ry1, rx2, ry2, white)
+            draw_line(rx1, ry1, rx2, ry2, gb_white2)
 
     def position_relative(self, x, y):
         position = (self.x2 - self.x1) * (y - self.y1) - \
@@ -263,14 +282,16 @@ class sector():
     def __init__(self, wallcoords, color_ceil, color_wall, color_floor,elevation = 0,top = 1600,str_name = ""):
         wallcount = len(wallcoords)
         self.walls = [wall(wallcoords[i],wallcoords[i+1],wallcoords[(i+2)%wallcount],wallcoords[(i+3)%wallcount]) for i in range(0,wallcount,2)]
-        self.color_ceil = color_ceil if not draw_topdown else allcolors[(sector.facecounter+1)%16]
-        self.color_wall = color_wall if not draw_topdown else allcolors[(sector.facecounter+0)%16]
-        self.color_floor = color_floor if not draw_topdown else allcolors[(sector.facecounter+1)%16]
+        self.color_ceil = color_ceil
+        self.color_wall = color_wall
+        self.color_floor = color_floor
         sector.facecounter+=2
         self.joined_sectors = []
         self.elevation = elevation + height_offset
         self.height = top - elevation
         self.rendering = False
+        self.td_rendering = False
+        self.no_access = False
         self.str_name = str_name
 
     def draw(self, x, y, a, min_x, max_x, lty, lby, rty, rby,relative_elevation):
@@ -285,15 +306,16 @@ class sector():
         self.rendering = False
 
     def draw_topdown(self, x, y, a, depth=0):
-        if self.rendering:
+        if self.td_rendering:
             return
-        self.rendering = True
+        self.td_rendering = True
         if depth < topdown_max_depth:
             for other in self.joined_sectors:
-                other.draw_topdown(x, y, a, depth + 1)
+                if not other.td_rendering:
+                    other.draw_topdown(x, y, a, depth + 1)
         for wall in self.walls:
             wall.draw_topdown(x, y, a,depth)
-        self.rendering = False
+        self.td_rendering = False
 
     def move_to(self, x, y, z):
         if z > -self.elevation:
@@ -301,7 +323,7 @@ class sector():
         for wall in self.walls:
             if wall.position_relative(x, y) < 0:
                 if wall.portal:
-                    if wall.next_sector.elevation <= (-z + max_stair_size):
+                    if wall.next_sector.elevation <= (-z + max_stair_size) and not wall.next_sector.no_access:
                         return wall.next_sector.move_to(x,y,z - self.elevation + wall.next_sector.elevation)
                     else:
                         x, y = wall.closest_point_on_wall(x, y).elements
