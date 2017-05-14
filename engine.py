@@ -27,9 +27,10 @@ class keypress():
     space  =  False
 
 
-# size = width, height = 1920, 1080
+# size = width, height = 320, 240
 size = width, height = 640, 480
 # size = width, height = 1024, 768
+# size = width, height = 1920, 1080
 # screen = pygame.display.set_mode(size,pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
 # screen = pygame.display.set_mode(size,pygame.RESIZABLE | pygame.DOUBLEBUF | pygame.HWSURFACE)
 screen = pygame.display.set_mode(size,pygame.DOUBLEBUF | pygame.HWSURFACE)
@@ -69,8 +70,8 @@ def random_pixel(x,y):
 def random_line(x1,y1,x2,y2):
     try:
         draw_line(x1,y1,x2,y2,randomcolor())
-    except:
-        pass
+    except Exception as e:
+        print(e)
 
 def draw_pixel(x,y,color=white):
     pygame.gfxdraw.pixel(screen, int(width/2+x), int(height/2+y), color)
@@ -78,8 +79,8 @@ def draw_pixel(x,y,color=white):
 def draw_line(x1,y1,x2,y2,color=white):
     try:
         pygame.gfxdraw.line(screen, int(width/2+x1), int(height/2+y1), int(width/2+x2), int(height/2+y2), color)
-    except:
-        pass
+    except Exception as e:
+        print(e)
 
 def draw_text(h,w,msg,color):
     # render text
@@ -87,13 +88,15 @@ def draw_text(h,w,msg,color):
     screen.blit(label, (w, h))
 
 def draw_column(x,y_top,y_bottom,color):
+    # color = fog_color(color,wall_angle)
     try:
         pygame.gfxdraw.line(screen, int(width/2+x), int(height/2+y_top), int(width/2+x), int(height/2+y_bottom), color)
-        # pygame.gfxdraw.pixel(screen, int(width/2+x), int(height/2+y_top), black)
-        # pygame.gfxdraw.pixel(screen, int(width/2+x), int(height/2+y_bottom), black)
-        # pygame.display.flip()
     except:
         pass
+        # pygame.gfxdraw.pixel(screen, int(width/2+x), int(height/2+y_top), black)
+    # pygame.gfxdraw.pixel(screen, int(width/2+x), int(height/2+y_bottom), black)
+    # pygame.display.flip()
+    # time.sleep(0.001)
 
 def draw_triangle(x1,y1,x2,y2,x3,y3,color=white):
     pygame.draw.polygon(screen, color,

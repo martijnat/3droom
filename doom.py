@@ -4,24 +4,30 @@ import sys
 import pygame
 import time
 import math
+import random
 from math import sin, cos, pi, atan,sqrt
 from engine import *
 
 key_press = keypress()
 current_sector = None
-topdown_max_depth = 8
+topdown_max_depth = 5
 topdown_scale = 10
+# player_max_move_speed = 0.2
+player_accel_rate = 0.02
+player_move_friction = 0.9
+player_ddx = 0
+player_ddy = 0
 move_speed = 0.1
 turn_speed = 0.05
-player_x = 0
-player_y = 0
+player_x = -6
+player_y = -1
 player_z = 0
+player_angle = -0.6
 height_offset = 9999
 player_height = 480
 player_jumpdz = -35
 player_gravdz = 1
 player_dz = 0
-player_angle = 0
 max_stair_size = 200
 draw_topdown = False
 LIVE_LOADING = True
@@ -29,22 +35,26 @@ UI_HEIGHT = 32
 min_clip_dist = 0.1
 
 # shift sprint!
-gb_black = pygame.Color(0x1d,  0x20,  0x21,  255)  # 1d2021
-gb_black2 = pygame.Color(0x7c,  0x6f,  0x64,  255)  # 7c6f64
-gb_red = pygame.Color(0xcc,  0x24,  0x1d,  255)  # cc241d
-gb_red2 = pygame.Color(0xfb,  0x49,  0x34,  255)  # fb4934
-gb_green = pygame.Color(0x98,  0x97,  0x1a,  255)  # 98971a
-gb_green2 = pygame.Color(0xb8,  0xbb,  0x26,  255)  # b8bb26
-gb_yellow = pygame.Color(0xd7,  0x99,  0x21,  255)  # d79921
-gb_yellow2 = pygame.Color(0xfa,  0xbd,  0x2f,  255)  # fabd2f
-gb_blue = pygame.Color(0x45,  0x85,  0x88,  255)  # 458588
-gb_blue2 = pygame.Color(0x83,  0xa5,  0x98,  255)  # 83a598
-gb_magenta = pygame.Color(0xb1,  0x62,  0x86,  255)  # b16286
-gb_magenta2 = pygame.Color(0xd3,  0x86,  0x9b,  255)  # d3869b
-gb_cyan = pygame.Color(0x68,  0x9d,  0x6a,  255)  # 689d6a
-gb_cyan2 = pygame.Color(0x8e,  0xc0,  0x7c,  255)  # 8ec07c
-gb_white = pygame.Color(0xd5, 0xc4, 0xa1)
-gb_white2 = pygame.Color(0xf9, 0xf5, 0xd7)
+gb_black = (0x1d,  0x20,  0x21,  255)  # 1d2021
+gb_black2 = (0x7c,  0x6f,  0x64,  255)  # 7c6f64
+gb_red = (0xcc,  0x24,  0x1d,  255)  # cc241d
+gb_red2 = (0xfb,  0x49,  0x34,  255)  # fb4934
+gb_green = (0x98,  0x97,  0x1a,  255)  # 98971a
+gb_green2 = (0xb8,  0xbb,  0x26,  255)  # b8bb26
+gb_yellow = (0xd7,  0x99,  0x21,  255)  # d79921
+gb_yellow2 = (0xfa,  0xbd,  0x2f,  255)  # fabd2f
+gb_blue = (0x45,  0x85,  0x88,  255)  # 458588
+gb_blue2 = (0x83,  0xa5,  0x98,  255)  # 83a598
+gb_magenta = (0xb1,  0x62,  0x86,  255)  # b16286
+gb_magenta2 = (0xd3,  0x86,  0x9b,  255)  # d3869b
+gb_cyan = (0x68,  0x9d,  0x6a,  255)  # 689d6a
+gb_cyan2 = (0x8e,  0xc0,  0x7c,  255)  # 8ec07c
+gb_white = (0xd5, 0xc4, 0xa1,  255)
+gb_white2 = (0xf9, 0xf5, 0xd7,  255)
+
+allcolors = [ gb_black , gb_black2 , gb_red , gb_red2 , gb_green ,
+              gb_green2 , gb_yellow , gb_yellow2 , gb_blue , gb_blue2 , gb_magenta ,
+              gb_magenta2 , gb_cyan , gb_cyan2 , gb_white , gb_white2 , ]
 
 
 secret_unlocked = [False]*4
@@ -232,15 +242,31 @@ def join_sectors(s1, s2):
         s2.joined_sectors.append(s1)
         s1.joined_sectors.append(s2)
 
+def join_oneway(s1, s2):
+    portals_made = False
+    for w1 in s1.walls:
+        for w2 in s2.walls:
+            if w1.x1 == w2.x2 and\
+               w1.x2 == w2.x1 and\
+               w1.y1 == w2.y2 and\
+               w1.y2 == w2.y1:
+                w1.portal = True
+                w1.next_sector = s2
+                portals_made = True
+    if portals_made:
+        s1.joined_sectors.append(s2)
+
+
 
 class sector():
-
+    facecounter = 0
     def __init__(self, wallcoords, color_ceil, color_wall, color_floor,elevation = 0,top = 1600,str_name = ""):
         wallcount = len(wallcoords)
         self.walls = [wall(wallcoords[i],wallcoords[i+1],wallcoords[(i+2)%wallcount],wallcoords[(i+3)%wallcount]) for i in range(0,wallcount,2)]
-        self.color_ceil = color_ceil
-        self.color_wall = color_wall
-        self.color_floor = color_floor
+        self.color_ceil = color_ceil if not draw_topdown else allcolors[(sector.facecounter+1)%16]
+        self.color_wall = color_wall if not draw_topdown else allcolors[(sector.facecounter+0)%16]
+        self.color_floor = color_floor if not draw_topdown else allcolors[(sector.facecounter+1)%16]
+        sector.facecounter+=2
         self.joined_sectors = []
         self.elevation = elevation + height_offset
         self.height = top - elevation
@@ -296,8 +322,8 @@ while engine_step(keypress):
                 exec(new_data)
         except Exception as e:
             print(e)
+    new_z = player_z
 
-    new_x, new_y, new_z = player_x, player_y, player_z
     if player_z > current_sector.elevation:
         player_dz = 0
         new_z = current_sector.elevation
@@ -305,17 +331,17 @@ while engine_step(keypress):
         player_dz += player_gravdz
 
     if keypress.w or keypress.up:
-        new_x -= move_speed * sin(player_angle)
-        new_y -= move_speed * cos(player_angle)
+        player_ddx -= player_accel_rate * sin(player_angle)
+        player_ddy -= player_accel_rate * cos(player_angle)
     if keypress.s or keypress.down:
-        new_x += move_speed * sin(player_angle)
-        new_y += move_speed * cos(player_angle)
+        player_ddx += player_accel_rate * sin(player_angle)
+        player_ddy += player_accel_rate * cos(player_angle)
     if keypress.a:
-        new_x += move_speed * sin(player_angle - pi / 2)
-        new_y += move_speed * cos(player_angle - pi / 2)
+        player_ddx += player_accel_rate * sin(player_angle - pi / 2)
+        player_ddy += player_accel_rate * cos(player_angle - pi / 2)
     if keypress.d:
-        new_x += move_speed * sin(player_angle + pi / 2)
-        new_y += move_speed * cos(player_angle + pi / 2)
+        player_ddx += player_accel_rate * sin(player_angle + pi / 2)
+        player_ddy += player_accel_rate * cos(player_angle + pi / 2)
     if keypress.left:
         player_angle += turn_speed
     if keypress.right:
@@ -328,6 +354,9 @@ while engine_step(keypress):
             player_dz = player_jumpdz
 
     new_z += player_dz
+    player_ddx = player_ddx * player_move_friction
+    player_ddy = player_ddy * player_move_friction
+    new_x, new_y = player_x + player_ddx, player_y + player_ddy
     current_sector, player_x, player_y,player_z = current_sector.move_to(new_x, new_y,new_z)
     current_sector.draw(player_x, player_y, player_angle, -width//2, width//2, -height//2, height//2 - UI_HEIGHT, -height//2, height//2, player_z - player_height + height_offset)
     if draw_topdown:
