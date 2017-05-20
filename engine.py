@@ -179,7 +179,7 @@ def engine_step(keypress=keypress(),framerate=60):
     clock.tick(framerate)
     pygame.display.flip()
     # screen.fill(black)
-    screen.fill((0,0,0))
+    # screen.fill((0,0,0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False

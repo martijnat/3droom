@@ -6,28 +6,20 @@ try:
 except ImportError:
     pass
 
-import sys
 import pygame
-import time
-import math
-import random
-from math import sin, cos, pi, atan, sqrt
+from math import sin, cos, pi, sqrt
 from engine import *
 
 # Set to true or when you can't achieve 50 frames per second
-DEBUG = True
 LOWPOWER = True
-key_press = keypress()
 current_sector = None
 topdown_max_depth = 5
 draw3d_max_depth = 32
 topdown_scale = 10
-# player_max_move_speed = 0.2
 player_accel_rate = 0.08 if LOWPOWER else 0.02
 player_move_friction = 0.85 if LOWPOWER else 0.9
 player_ddx = 0
 player_ddy = 0
-move_speed = 0.1
 turn_speed = 0.10 if LOWPOWER else 0.05
 player_x = -6
 player_y = -1
@@ -43,14 +35,6 @@ draw_topdown = False
 LIVE_LOADING = False
 UI_HEIGHT = 32
 min_clip_dist = 0.1
-
-
-allcolors = [gb_black, gb_black2, gb_red, gb_red2, gb_green,
-             gb_green2, gb_yellow, gb_yellow2, gb_blue, gb_blue2, gb_magenta,
-             gb_magenta2, gb_cyan, gb_cyan2, gb_white, gb_white2, ]
-
-
-secret_unlocked = [False] * 4
 
 
 def drawUI(current_sector):
@@ -74,6 +58,7 @@ def intersect(x1, y1, x2, y2, h):
     new_y = y1 + vis_ratio * (y2 - y1)
     return new_x, new_y
 
+
 class vector():
 
     def __init__(self, elements):
@@ -87,9 +72,6 @@ class vector():
 
     def dot(self, other):
         return sum([l * r for l, r in zip(self.elements, other.elements)])
-
-    def split(self):
-        return self.elements
 
     def normalize(self):
         size = sqrt(self.dot(self))
@@ -145,17 +127,16 @@ class wall():
         if abs(right_x - left_x) < wall.min_dist:
             return              # Don't draw the backside of walls
 
-
-        self.draw_partial(x,y,a,left_x, right_x,
+        self.draw_partial(x, y, a, left_x, right_x,
                           bot_ly, top_ly,
                           bot_ry, top_ry,
                           min_x, max_x,
                           lty, lby,
                           rty, rby,
                           height,
-                          elevation,  absolute_elevation, color_ceil, color_wall, color_floor,topdown, depth)
+                          elevation,  absolute_elevation, color_ceil, color_wall, color_floor, topdown, depth)
 
-    def draw_partial(self,x,y,a, left_x, right_x, bot_ly, top_ly, bot_ry, top_ry, min_x, max_x, lty, lby, rty, rby,height, elevation, absolute_elevation, color_ceil, color_wall, color_floor,topdown , depth):
+    def draw_partial(self, x, y, a, left_x, right_x, bot_ly, top_ly, bot_ry, top_ry, min_x, max_x, lty, lby, rty, rby, height, elevation, absolute_elevation, color_ceil, color_wall, color_floor, topdown, depth):
         # If complete out of sight, stop drawing
         if right_x <= min_x:
             return
@@ -164,18 +145,18 @@ class wall():
 
         # clip left and right
         if right_x > max_x:
-            new_dist_ratio = (max_x-left_x)/float(right_x-left_x)
-            rty = lty + (rty-lty) * new_dist_ratio
-            rby = lby + (rby-lby) * new_dist_ratio
-            top_ry = top_ly + (top_ry-top_ly) * new_dist_ratio
-            bot_ry = bot_ly + (bot_ry-bot_ly) * new_dist_ratio
+            new_dist_ratio = (max_x - left_x) / float(right_x - left_x)
+            rty = lty + (rty - lty) * new_dist_ratio
+            rby = lby + (rby - lby) * new_dist_ratio
+            top_ry = top_ly + (top_ry - top_ly) * new_dist_ratio
+            bot_ry = bot_ly + (bot_ry - bot_ly) * new_dist_ratio
             right_x = max_x
         if left_x < min_x:
-            new_dist_ratio = (right_x-min_x)/float(right_x-left_x)
-            lty = rty + (lty-rty) * new_dist_ratio
-            lby = rby + (lby-rby) * new_dist_ratio
-            top_ly = top_ry + (top_ly-top_ry) * new_dist_ratio
-            bot_ly = bot_ry + (bot_ly-bot_ry) * new_dist_ratio
+            new_dist_ratio = (right_x - min_x) / float(right_x - left_x)
+            lty = rty + (lty - rty) * new_dist_ratio
+            lby = rby + (lby - rby) * new_dist_ratio
+            top_ly = top_ry + (top_ly - top_ry) * new_dist_ratio
+            bot_ly = bot_ry + (bot_ly - bot_ry) * new_dist_ratio
             left_x = min_x
 
         # if top_ry < rty and top_ly < lty:
@@ -192,20 +173,26 @@ class wall():
 
         if self.portal:
             # portal_top_ratio = (self.next_sector.elevation + self.next_sector.height - height - absolute_elevation) / float(height)
-            portal_top_ratio = (self.next_sector.elevation + self.next_sector.height - absolute_elevation) / float(height)
-            portal_bottom_ratio = (self.next_sector.elevation - absolute_elevation) / float(height)
+            portal_top_ratio = (self.next_sector.elevation +
+                                self.next_sector.height - absolute_elevation) / float(height)
+            portal_bottom_ratio = (
+                self.next_sector.elevation - absolute_elevation) / float(height)
 
-            portal_top_ratio = max(0,min(1,portal_top_ratio))
-            portal_bottom_ratio = max(0,min(1,portal_bottom_ratio))
+            portal_top_ratio = max(0, min(1, portal_top_ratio))
+            portal_bottom_ratio = max(0, min(1, portal_bottom_ratio))
             self.next_sector.draw(x,
                                   y,
                                   a,
                                   left_x,
                                   right_x,
-                                  max(bot_ly + (top_ly - bot_ly) * portal_top_ratio,lty),
-                                  min(bot_ly + (top_ly - bot_ly) * portal_bottom_ratio,lby),
-                                  max(bot_ry + (top_ry - bot_ry) * portal_top_ratio,rty),
-                                  min(bot_ry + (top_ry - bot_ry) * portal_bottom_ratio,rby),
+                                  max(bot_ly + (top_ly - bot_ly)
+                                      * portal_top_ratio, lty),
+                                  min(bot_ly + (top_ly - bot_ly)
+                                      * portal_bottom_ratio, lby),
+                                  max(bot_ry + (top_ry - bot_ry)
+                                      * portal_top_ratio, rty),
+                                  min(bot_ry + (top_ry - bot_ry)
+                                      * portal_bottom_ratio, rby),
                                   elevation + self.next_sector.elevation - absolute_elevation,
                                   topdown,
                                   depth + 1)
@@ -232,7 +219,6 @@ class wall():
                           (right_x, bot_ry), (left_x, bot_ly), ], color_wall, topdown)
             pass
 
-
         # draw_polygon([
         #     (left_x, lty),
         #     (right_x, rty),
@@ -240,12 +226,13 @@ class wall():
         #     (left_x, lby),
         # ], (0,255,0), topdown)
 
-
         # Draw Bounding box of the ceiling
-        draw_polygon([(left_x, -height), (right_x, -height), (right_x, top_ry), (left_x, top_ly),], color_ceil, topdown)
+        draw_polygon([(left_x, -height), (right_x, -height),
+                      (right_x, top_ry), (left_x, top_ly), ], color_ceil, topdown)
 
         # Draw Bounding box of the floor
-        draw_polygon([(left_x, bot_ly), (right_x, bot_ry), (right_x, height), (left_x, height),], color_floor, topdown)
+        draw_polygon([(left_x, bot_ly), (right_x, bot_ry), (right_x,
+                                                            height), (left_x, height), ], color_floor, topdown)
 
     def draw_topdown(self, x, y, a, depth):
         # calculate points relative to player position
@@ -318,7 +305,6 @@ def join_oneway(s1, s2):
 
 
 class sector():
-    facecounter = 0
 
     def __init__(self, wallcoords, color_ceil, color_wall, color_floor, elevation=0, top=1600, str_name=""):
         wallcount = len(wallcoords)
@@ -327,7 +313,6 @@ class sector():
         self.color_ceil = color_ceil
         self.color_wall = color_wall
         self.color_floor = color_floor
-        sector.facecounter += 2
         self.joined_sectors = []
         self.elevation = elevation + height_offset
         self.height = top - elevation
@@ -421,7 +406,8 @@ while engine_step(keypress, 30 if LOWPOWER else 60):
     new_x, new_y = player_x + player_ddx, player_y + player_ddy
     current_sector, player_x, player_y, player_z = current_sector.move_to(
         new_x, new_y, new_z)
-    current_sector.draw(player_x, player_y, player_angle, -width//2, width//2, -height//2, height//2 - UI_HEIGHT, -height//2, height//2 - UI_HEIGHT, player_z - player_height + height_offset,draw_topdown)
+    current_sector.draw(player_x, player_y, player_angle, -width // 2, width // 2, -height // 2, height // 2 -
+                        UI_HEIGHT, -height // 2, height // 2 - UI_HEIGHT, player_z - player_height + height_offset, draw_topdown)
     # current_sector.draw(player_x, player_y, player_angle, -width // 4, width // 4, -height // 4, height // 4, -height // 4, height // 4, player_z - player_height + height_offset, draw_topdown)
     if draw_topdown:
         current_sector.draw_topdown(player_x, player_y, player_angle)
