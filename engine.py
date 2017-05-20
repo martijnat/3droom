@@ -134,13 +134,16 @@ def dropoff_color(color,ratio):
 
 def draw_polygon(points,color,topdown,outline=False):
     # pygame.draw.polygon(screen, map((lambda width,height:(int(width/2+x), int(height/2+y))),points), color)
-    if topdown:
-        pygame.draw.polygon(screen, gb_black, list([(int(width/2.0+x), int(height/2.0+y)) for x,y in points]), 0)
-        pygame.draw.polygon(screen, gb_black2, list([(int(width/2.0+x), int(height/2.0+y)) for x,y in points]), 1)
-    else:
-        pygame.draw.polygon(screen, color, list([(int(width/2.0+x), int(height/2.0+y)) for x,y in points]), 0)
-        if outline:
-            pygame.draw.polygon(screen, outline, list([(int(width/2.0+x), int(height/2.0+y)) for x,y in points]), 1)
+    try:
+        if topdown:
+            pygame.draw.polygon(screen, gb_black, list([(int(width/2.0+x), int(height/2.0+y)) for x,y in points]), 0)
+            pygame.draw.polygon(screen, gb_black2, list([(int(width/2.0+x), int(height/2.0+y)) for x,y in points]), 1)
+        else:
+            pygame.draw.polygon(screen, color, list([(int(width/2.0+x), int(height/2.0+y)) for x,y in points]), 0)
+            if outline:
+                pygame.draw.polygon(screen, outline, list([(int(width/2.0+x), int(height/2.0+y)) for x,y in points]), 1)
+    except:
+        pass
 
 
 

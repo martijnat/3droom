@@ -16,7 +16,7 @@ from engine import *
 
 # Set to true or when you can't achieve 50 frames per second
 DEBUG = True
-LOWPOWER = False
+LOWPOWER = True
 key_press = keypress()
 current_sector = None
 topdown_max_depth = 5
@@ -40,7 +40,7 @@ player_gravdz = 8 if LOWPOWER else 1
 player_dz = 0
 max_stair_size = 200
 draw_topdown = False
-LIVE_LOADING = True
+LIVE_LOADING = False
 UI_HEIGHT = 32
 min_clip_dist = 0.1
 
@@ -241,10 +241,10 @@ class wall():
         # ], (0,255,0), topdown)
 
 
-        # # # Draw Bounding box of the ceiling
+        # Draw Bounding box of the ceiling
         draw_polygon([(left_x, -height), (right_x, -height), (right_x, top_ry), (left_x, top_ly),], color_ceil, topdown)
 
-        # # # Draw Bounding box of the floor
+        # Draw Bounding box of the floor
         draw_polygon([(left_x, bot_ly), (right_x, bot_ry), (right_x, height), (left_x, height),], color_floor, topdown)
 
     def draw_topdown(self, x, y, a, depth):
