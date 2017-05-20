@@ -1,12 +1,32 @@
 #!/usr/bin/env python3
 
 import sys
+try:
+    import android
+except ImportError:
+    android = None
 import pygame
 import pygame.gfxdraw
 import random
 # import pygame.Color
 import time
+# android = None
 pygame.init()
+# try:
+#     import android
+# except ImportError:
+#     pass
+# if android:
+#     android.map_key(android.KEYCODE_BACK, pygame.K_ESCAPE)
+
+try:
+    if android:
+        android.map_key(android.KEYCODE_BACK, pygame.K_ESCAPE)
+        android.map_key(android.KEYCODE_VOLUME_DOWN,pygame.K_SPACE)
+        android.map_key(android.KEYCODE_VOLUME_UP,pygame.K_TAB)
+except:
+    pass
+
 # initialize font; must be called after 'pygame.init()' to avoid 'Font not Initialized' error
 mainfont = pygame.font.Font("./FSEX300-L.ttf",24)
 DEBUG = False
@@ -14,6 +34,25 @@ DEBUG = False
 engine_version = "1.0"
 speed = [2, 2]
 black = 0, 0, 0
+black = (0x1d,  0x20,  0x21)
+mouse_deadzone = 100
+
+gb_black = (0x1d,  0x20,  0x21)  # 1d2021
+gb_black2 = (0x7c,  0x6f,  0x64)  # 7c6f64
+gb_red = (0xcc,  0x24,  0x1d)  # cc241d
+gb_red2 = (0xfb,  0x49,  0x34)  # fb4934
+gb_green = (0x98,  0x97,  0x1a)  # 98971a
+gb_green2 = (0xb8,  0xbb,  0x26)  # b8bb26
+gb_yellow = (0xd7,  0x99,  0x21)  # d79921
+gb_yellow2 = (0xfa,  0xbd,  0x2f)  # fabd2f
+gb_blue = (0x45,  0x85,  0x88)  # 458588
+gb_blue2 = (0x83,  0xa5,  0x98)  # 83a598
+gb_magenta = (0xb1,  0x62,  0x86)  # b16286
+gb_magenta2 = (0xd3,  0x86,  0x9b)  # d3869b
+gb_cyan = (0x68,  0x9d,  0x6a)  # 689d6a
+gb_cyan2 = (0x8e,  0xc0,  0x7c)  # 8ec07c
+gb_white = (0xd5, 0xc4, 0xa1)
+gb_white2 = (0xf9, 0xf5, 0xd7)
 
 class keypress():
     left   =  False
@@ -25,17 +64,19 @@ class keypress():
     s      =  False
     d      =  False
     space  =  False
+    tab    =  False
 
 
 # size = width, height = 320, 240
-size = width, height = 640, 480
+size = width, height = 800, 480
+# size = width, height = 480, 800
 # size = width, height = 1024, 768
 # size = width, height = 1920, 1080
 # screen = pygame.display.set_mode(size,pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
 # screen = pygame.display.set_mode(size,pygame.RESIZABLE | pygame.DOUBLEBUF | pygame.HWSURFACE)
 screen = pygame.display.set_mode(size,pygame.DOUBLEBUF | pygame.HWSURFACE)
 screen.set_alpha(None)             # Engine is so simple, it does not use an alhpa channel
-pygame.mouse.set_visible(False) # invisible mouse
+# pygame.mouse.set_visible(False) # invisible mouse
 # screen = pygame.display.set_mode(size)
 
 pygame.display.set_caption("Doomlike engine %s"%engine_version)
@@ -59,9 +100,9 @@ def depthcolor(c,depth):
     return pygame.Color(r,g,b, 255)
 
 def randomcolor():
-    r = int(128 + 127*random.randrange(2))
-    g = int(128 + 127*random.randrange(2))
-    b = int(128 + 127*random.randrange(2))
+    r = int(random.randrange(255))
+    g = int(random.randrange(255))
+    b = int(random.randrange(255))
     return pygame.Color(r,g,b, 255)
 
 def random_pixel(x,y):
@@ -87,19 +128,37 @@ def draw_text(h,w,msg,color):
     label = mainfont.render(msg, 1, color)
     screen.blit(label, (w, h))
 
-def draw_column(x,y_top,y_bottom,color,debug = False):
+def dropoff_color(color,ratio):
+    r,g,b = map(lambda x:x*ratio,color)
+    return (r,g,b)
+
+def draw_polygon(points,color,outline):
+    # pygame.draw.polygon(screen, map((lambda width,height:(int(width/2+x), int(height/2+y))),points), color)
+    if outline:
+        pygame.draw.polygon(screen, gb_black, list([(int(width/2.0+x), int(height/2.0+y)) for x,y in points]), 0)
+        pygame.draw.polygon(screen, gb_black2, list([(int(width/2.0+x), int(height/2.0+y)) for x,y in points]), 1)
+    else:
+        pygame.draw.polygon(screen, color, list([(int(width/2.0+x), int(height/2.0+y)) for x,y in points]), 1)
+
+
+
+def draw_column(x,y_top,y_bottom,color):
     # color = fog_color(color,wall_angle)
+    y_top = min(y_top,height)
+    y_bottom = max(y_bottom,-height)
     try:
+        if DEBUG:
+            pygame.gfxdraw.line(screen, int(width/2+x), int(height/2+y_top), int(width/2+x), int(height/2+y_bottom), randomcolor())
+            pygame.display.flip()
+            time.sleep(0.001)
         pygame.gfxdraw.line(screen, int(width/2+x), int(height/2+y_top), int(width/2+x), int(height/2+y_bottom), color)
-        if debug:
-            pygame.gfxdraw.pixel(screen, int(width/2+x), int(height/2+y_top), (0x1d,  0x20,  0x21,  255))
-            pygame.gfxdraw.pixel(screen, int(width/2+x), int(height/2+y_bottom), (0x1d,  0x20,  0x21,  255))
+        # if DEBUG:
+        # pygame.gfxdraw.pixel(screen, int(width/2+x), int(height/2+y_top), (0x1d,  0x20,  0x21,  255))
+        # pygame.gfxdraw.pixel(screen, int(width/2+x), int(height/2+y_bottom), (0x1d,  0x20,  0x21,  255))
     except:
         pass
         # pygame.gfxdraw.pixel(screen, int(width/2+x), int(height/2+y_top), black)
     # pygame.gfxdraw.pixel(screen, int(width/2+x), int(height/2+y_bottom), black)
-    # pygame.display.flip()
-    # time.sleep(0.001)
 
 def draw_triangle(x1,y1,x2,y2,x3,y3,color=white):
     pygame.draw.polygon(screen, color,
@@ -111,19 +170,28 @@ def draw_triangle(x1,y1,x2,y2,x3,y3,color=white):
 clock = pygame.time.Clock()
 
 def engine_step(keypress=keypress(),framerate=60):
-    global screen,height,width
+    global screen,height,width,DEBUG
     clock.tick(framerate)
     pygame.display.flip()
     # screen.fill(black)
-    keypress.p = False          # debug key
-
+    screen.fill((0,0,0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False
-        if event.type == pygame.VIDEORESIZE:
+        # if event.type == pygame.MOUSEBUTTONDOWN:
+            # keypress.space = True
+        elif event.type == pygame.MOUSEBUTTONUP:
+            keypress.left = False
+            keypress.right = False
+            keypress.up = False
+            keypress.down = False
+            keypress.space = False
+            keypress.a = False
+            keypress.d = False
+        elif event.type == pygame.VIDEORESIZE:
             width,height=event.size
             screen = pygame.display.set_mode(event.size)
-        if event.type == pygame.KEYDOWN:
+        elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
                 keypress.left = True
             elif event.key == pygame.K_RIGHT:
@@ -142,8 +210,8 @@ def engine_step(keypress=keypress(),framerate=60):
                 keypress.s = True
             elif event.key == pygame.K_d:
                 keypress.d = True
-            elif event.key == pygame.K_p:
-                keypress.p = True
+            elif event.key == pygame.K_TAB:
+                keypress.tab = True
             elif event.key == pygame.K_f:
                 pygame.display.toggle_fullscreen()
             elif event.key == pygame.K_ESCAPE:
@@ -167,6 +235,28 @@ def engine_step(keypress=keypress(),framerate=60):
                 keypress.s = False
             elif event.key == pygame.K_d:
                 keypress.d = False
+            elif event.key == pygame.K_TAB:
+                keypress.tab = False
+        if pygame.mouse.get_pressed()[0]:
+            try:
+                mx,my = pygame.mouse.get_pos()
+                cmx, cmy = mx - width//2,my - height//2
+                keypress.a = cmx < -mouse_deadzone and cmy > mouse_deadzone
+                keypress.d = cmx > mouse_deadzone and cmy > mouse_deadzone
+                keypress.tab = cmx < -mouse_deadzone and cmy < -mouse_deadzone
+                keypress.left = cmx < -mouse_deadzone and cmy < mouse_deadzone and cmy > -mouse_deadzone
+                keypress.right = cmx > mouse_deadzone and cmy < mouse_deadzone and cmy > -mouse_deadzone
+                keypress.up = cmy < -mouse_deadzone and cmx < mouse_deadzone and cmx > -mouse_deadzone
+                keypress.down = cmy > mouse_deadzone and cmx < mouse_deadzone and cmx > -mouse_deadzone
+                if cmx > -mouse_deadzone and\
+                   cmx < mouse_deadzone and\
+                   cmy > -mouse_deadzone and\
+                   cmy < mouse_deadzone:
+                    keypress.space = True
+                else:
+                    keypress.space = False
+            except AttributeError:
+                pass
 
     return True
 
