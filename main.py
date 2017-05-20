@@ -13,7 +13,7 @@ from engine import *
 # Set to true or when you can't achieve 50 frames per second
 LOWPOWER = True
 current_sector = None
-topdown_max_depth = 5
+topdown_max_depth = 8
 draw3d_max_depth = 32
 topdown_scale = 10
 player_accel_rate = 0.08 if LOWPOWER else 0.02
@@ -245,8 +245,14 @@ class wall():
 
         if depth == 0:
             draw_line(rx1, ry1, rx2, ry2, gb_cyan2)
+            draw_line(rx1, ry1+1, rx2, ry2+1, gb_cyan2)
+            draw_line(rx1+1, ry1, rx2+1, ry2, gb_cyan2)
+            draw_line(rx1+1, ry1+1, rx2+1, ry2+1, gb_cyan2)
         else:
             draw_line(rx1, ry1, rx2, ry2, gb_white2)
+            draw_line(rx1, ry1+1, rx2, ry2+1, gb_white2)
+            draw_line(rx1+1, ry1, rx2+1, ry2, gb_white2)
+            draw_line(rx1+1, ry1+1, rx2+1, ry2+1, gb_white2)
 
     def position_relative(self, x, y):
         position = (self.x2 - self.x1) * (y - self.y1) - \
@@ -317,7 +323,6 @@ class sector():
         self.elevation = elevation + height_offset
         self.height = top - elevation
         self.rendering = False
-        self.td_rendering = False
         self.no_access = False
         self.str_name = str_name
 
@@ -332,17 +337,14 @@ class sector():
             # time.sleep(0.001)
         self.rendering = False
 
-    def draw_topdown(self, x, y, a, depth=0):
-        if self.td_rendering:
+    def draw_topdown(self, x, y, a, depth=0,draw_list=[]):
+        if self in draw_list:
             return
-        self.td_rendering = True
         if depth < topdown_max_depth:
             for other in self.joined_sectors:
-                if not other.td_rendering:
-                    other.draw_topdown(x, y, a, depth + 1)
+                other.draw_topdown(x, y, a, depth + 1, draw_list+[self])
         for wall in self.walls:
             wall.draw_topdown(x, y, a, depth)
-        self.td_rendering = False
 
     def move_to(self, x, y, z):
         if z > -self.elevation:
