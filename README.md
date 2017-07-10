@@ -18,3 +18,6 @@ are not geometrically possible.
 # Usage
 
     ./main.py
+
+alternatively grab the [apk](./3droom.apk) to run the program on
+android devices without needing python
