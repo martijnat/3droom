@@ -7,32 +7,37 @@ except ImportError:
     pass
 
 import pygame
+import random
 from math import sin, cos, pi, sqrt
 from engine import *
+
+game_data = "data.py"
 
 # Set to true or when you can't achieve 50 frames per second
 LOWPOWER = True
 current_sector = None
-topdown_max_depth = 8
-draw3d_max_depth = 32
-topdown_scale = 10
-player_accel_rate = 0.08 if LOWPOWER else 0.02
-player_move_friction = 0.85 if LOWPOWER else 0.9
+topdown_max_depth = 2
+draw3d_max_depth_base = 64 if LOWPOWER else 9999
+draw3d_max_depth = draw3d_max_depth_base
+sectors_drawn = 0
+topdown_scale = 8
+player_accel_rate = 0.12
+player_move_friction = 0.8
 player_ddx = 0
 player_ddy = 0
-turn_speed = 0.10 if LOWPOWER else 0.05
-player_x = -6
-player_y = -1
+turn_speed = 0.10
+player_x = -10
+player_y = -10
 player_z = 0
-player_angle = -0.6
+player_angle = -3
 height_offset = 9999
 player_height = 480
-player_jumpdz = -105 if LOWPOWER else -35
+player_jumpdz = -90
 player_gravdz = 8 if LOWPOWER else 1
 player_dz = 0
 max_stair_size = 200
 draw_topdown = False
-LIVE_LOADING = False
+LIVE_LOADING = True
 UI_HEIGHT = 32
 min_clip_dist = 0.1
 
@@ -92,9 +97,13 @@ class wall():
         self.portal = False
         self.next_sector = None
 
-    def draw(self, x, y, a, color_ceil, color_wall, color_floor, min_x, max_x, lty, lby, rty, rby, height, elevation, absolute_elevation, topdown, depth=0):
-        if depth > draw3d_max_depth:
-            return
+    def draw(self, x, y, a, color_ceil, color_wall, color_floor, min_x, max_x, lty, lby, rty, rby, height, elevation, absolute_elevation, topdown):
+        global sectors_drawn
+        # if sectors_drawn >= draw3d_max_depth:
+        #     if random.random() < 0.5:
+        #         draw_polygon([(min_x, lty), (max_x, rty), (max_x, rby), (min_x, lby),], gb_black, topdown)
+        #         return
+        sectors_drawn+=1
         if max_x < min_x:
             return
 
@@ -134,9 +143,9 @@ class wall():
                           lty, lby,
                           rty, rby,
                           height,
-                          elevation,  absolute_elevation, color_ceil, color_wall, color_floor, topdown, depth)
+                          elevation,  absolute_elevation, color_ceil, color_wall, color_floor, topdown)
 
-    def draw_partial(self, x, y, a, left_x, right_x, bot_ly, top_ly, bot_ry, top_ry, min_x, max_x, lty, lby, rty, rby, height, elevation, absolute_elevation, color_ceil, color_wall, color_floor, topdown, depth):
+    def draw_partial(self, x, y, a, left_x, right_x, bot_ly, top_ly, bot_ry, top_ry, min_x, max_x, lty, lby, rty, rby, height, elevation, absolute_elevation, color_ceil, color_wall, color_floor, topdown):
         # If complete out of sight, stop drawing
         if right_x <= min_x:
             return
@@ -158,18 +167,6 @@ class wall():
             top_ly = top_ry + (top_ly - top_ry) * new_dist_ratio
             bot_ly = bot_ry + (bot_ly - bot_ry) * new_dist_ratio
             left_x = min_x
-
-        # if top_ry < rty and top_ly < lty:
-        #     top_ry = rty
-        #     top_ly = lty
-        # partial clipping wall
-        # if top_ry < rty and top_ly >= lty:
-        #     a = (top_ry-top_ly)/(right_x-left_x)
-        #     b = top_ly - lty
-        #     c = (rty-lty)/(right_x-left_x)
-        #     d = 0
-        #     x_intersect = (d-c)/(a-b)
-        #     y_intersect = a*x + b
 
         if self.portal:
             # portal_top_ratio = (self.next_sector.elevation + self.next_sector.height - height - absolute_elevation) / float(height)
@@ -194,8 +191,7 @@ class wall():
                                   min(bot_ry + (top_ry - bot_ry)
                                       * portal_bottom_ratio, rby),
                                   elevation + self.next_sector.elevation - absolute_elevation,
-                                  topdown,
-                                  depth + 1)
+                                  topdown)
             # Bottom portal edge
             if portal_top_ratio < 1:
                 draw_polygon([
@@ -227,8 +223,10 @@ class wall():
         # ], (0,255,0), topdown)
 
         # Draw Bounding box of the ceiling
-        draw_polygon([(left_x, -height), (right_x, -height),
-                      (right_x, top_ry), (left_x, top_ly), ], color_ceil, topdown)
+        draw_polygon([(left_x, -height),
+                      (right_x, -height),
+                      (right_x, top_ry),
+                      (left_x, top_ly), ], color_ceil, topdown)
 
         # Draw Bounding box of the floor
         draw_polygon([(left_x, bot_ly), (right_x, bot_ry), (right_x,
@@ -243,16 +241,11 @@ class wall():
 
         rx1, ry1, rx2, ry2 = [_ * topdown_scale for _ in [rx1, ry1, rx2, ry2]]
 
-        if depth == 0:
-            draw_line(rx1, ry1, rx2, ry2, gb_cyan2)
-            draw_line(rx1, ry1+1, rx2, ry2+1, gb_cyan2)
-            draw_line(rx1+1, ry1, rx2+1, ry2, gb_cyan2)
-            draw_line(rx1+1, ry1+1, rx2+1, ry2+1, gb_cyan2)
-        else:
-            draw_line(rx1, ry1, rx2, ry2, gb_white2)
-            draw_line(rx1, ry1+1, rx2, ry2+1, gb_white2)
-            draw_line(rx1+1, ry1, rx2+1, ry2, gb_white2)
-            draw_line(rx1+1, ry1+1, rx2+1, ry2+1, gb_white2)
+        colors = [gb_green,gb_white2,gb_white]
+        draw_line(rx1, ry1, rx2, ry2, colors[depth])
+        draw_line(rx1, ry1+1, rx2, ry2+1,colors[depth] )
+        draw_line(rx1+1, ry1, rx2+1, ry2,colors[depth] )
+        draw_line(rx1+1, ry1+1, rx2+1, ry2+1,colors[depth] )
 
     def position_relative(self, x, y):
         position = (self.x2 - self.x1) * (y - self.y1) - \
@@ -332,7 +325,7 @@ class sector():
         self.rendering = True
         for wall in self.walls:
             wall.draw(x, y, a, self.color_ceil, self.color_wall,
-                      self.color_floor, min_x, max_x, lty, lby, rty, rby, self.height, relative_elevation, self.elevation, topdown, depth)
+                      self.color_floor, min_x, max_x, lty, lby, rty, rby, self.height, relative_elevation, self.elevation, topdown)
             # pygame.display.flip()
             # time.sleep(0.001)
         self.rendering = False
@@ -361,20 +354,23 @@ class sector():
         return self, x, y, z
 
 
-last_data = open("data.py").read()
+last_data = open(game_data).read()
 exec(last_data)
 current_sector = init_sector
 while engine_step(keypress, 30 if LOWPOWER else 60):
     if LIVE_LOADING:
         try:
-            new_data = open("data.py").read()
+            new_data = open(game_data).read()
             if new_data != last_data:
-                last_data = new_data
                 exec(new_data)
+                last_data = new_data
         except Exception as e:
             print(e)
     new_z = player_z
 
+    key_pressed = False
+    player_move_friction = 0.8 if new_z == -current_sector.elevation else 1
+    player_accel_rate = 0.12 if new_z == -current_sector.elevation else 0.03
     if player_z > current_sector.elevation:
         player_dz = 0
         new_z = current_sector.elevation
@@ -384,21 +380,28 @@ while engine_step(keypress, 30 if LOWPOWER else 60):
     if keypress.w or keypress.up:
         player_ddx -= player_accel_rate * sin(player_angle)
         player_ddy -= player_accel_rate * cos(player_angle)
+        key_pressed = True
     if keypress.s or keypress.down:
         player_ddx += player_accel_rate * sin(player_angle)
         player_ddy += player_accel_rate * cos(player_angle)
+        key_pressed = True
     if keypress.a:
         player_ddx += player_accel_rate * sin(player_angle - pi / 2.0)
         player_ddy += player_accel_rate * cos(player_angle - pi / 2.0)
+        key_pressed = True
     if keypress.d:
         player_ddx += player_accel_rate * sin(player_angle + pi / 2.0)
         player_ddy += player_accel_rate * cos(player_angle + pi / 2.0)
+        key_pressed = True
     if keypress.left:
         player_angle += turn_speed
+        key_pressed = True
     if keypress.right:
         player_angle -= turn_speed
+        key_pressed = True
     draw_topdown = keypress.tab
     if keypress.space:
+        key_pressed = True
         if new_z == -current_sector.elevation:
             player_dz = player_jumpdz
 
@@ -406,16 +409,20 @@ while engine_step(keypress, 30 if LOWPOWER else 60):
     player_ddx = player_ddx * player_move_friction
     player_ddy = player_ddy * player_move_friction
     new_x, new_y = player_x + player_ddx, player_y + player_ddy
-    current_sector, player_x, player_y, player_z = current_sector.move_to(
-        new_x, new_y, new_z)
-    current_sector.draw(player_x, player_y, player_angle, -width // 2, width // 2, -height // 2, height // 2 -
-                        UI_HEIGHT, -height // 2, height // 2 - UI_HEIGHT, player_z - player_height + height_offset, draw_topdown)
-    # current_sector.draw(player_x, player_y, player_angle, -width // 4, width // 4, -height // 4, height // 4, -height // 4, height // 4, player_z - player_height + height_offset, draw_topdown)
+    sectors_drawn = 0
+    draw3d_max_depth = 9999 if not key_pressed else draw3d_max_depth_base
+    current_sector, player_x, player_y, player_z = current_sector.move_to(new_x, new_y, new_z)
+
+    if LOWPOWER:
+        current_sector.draw(player_x, player_y, player_angle, -width // 2, width // 2, -height // 2, height // 2, -height // 2, height // 2, player_z - player_height + height_offset, draw_topdown)
+    else:
+        current_sector.draw(player_x, player_y, player_angle, -width // 2, width // 2, -height // 2, height // 2 - UI_HEIGHT, -height // 2, height // 2 - UI_HEIGHT, player_z - player_height + height_offset + current_sector.elevation, draw_topdown)
     if draw_topdown:
         current_sector.draw_topdown(player_x, player_y, player_angle)
         draw_line(0, 0, 0, -height / float(32), gb_red)
         draw_line(0, 0, -height / float(64), 0, gb_red)
         draw_line(0, 0, height / float(64), 0, gb_red)
+    # if not LOWPOWER:
     drawUI(current_sector)
 
 pygame.quit()

@@ -67,7 +67,7 @@ class keypress():
     tab    =  False
 
 
-# size = width, height = 320, 240
+# size = width, height = 400, 240
 size = width, height = 800, 480
 # size = width, height = 480, 800
 # size = width, height = 1024, 768
@@ -79,7 +79,7 @@ screen.set_alpha(None)             # Engine is so simple, it does not use an alh
 # pygame.mouse.set_visible(False) # invisible mouse
 # screen = pygame.display.set_mode(size)
 
-pygame.display.set_caption("Doomlike engine %s"%engine_version)
+pygame.display.set_caption("3d-room engine %s"%engine_version)
 
 white = pygame.Color(255, 255, 255, 255)
 grey = pygame.Color(128, 128, 128, 255)
@@ -147,6 +147,8 @@ def draw_polygon(points,color,topdown,outline=False):
 
 
 
+
+
 def draw_column(x,y_top,y_bottom,color):
     # color = fog_color(color,wall_angle)
     y_top = min(y_top,height)
@@ -178,7 +180,7 @@ def engine_step(keypress=keypress(),framerate=60):
     global screen,height,width,DEBUG
     clock.tick(framerate)
     pygame.display.flip()
-    # screen.fill(black)
+    screen.fill(black)
     # screen.fill((0,0,0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
